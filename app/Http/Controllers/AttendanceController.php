@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Attendance;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
@@ -16,9 +17,14 @@ class AttendanceController extends Controller
         return Attendance::find($id);
     }
 
+
     public function store(Request $request)
     {
-        return Attendance::create($request->all());
+        $user = User::find($request->user_id);
+
+        return $user
+            ? $user->attendances()->create($request->all())
+            : response()->json(['message' => 'User not found'], 404);
     }
 
     public function update(Request $request, $id)
